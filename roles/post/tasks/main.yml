@@ -1,0 +1,8 @@
+---
+# tasks file for post
+- name: output message
+  debug:
+    msg: "rebooting..."
+
+- name: Unconditionally reboot the machine with all defaults
+  reboot:

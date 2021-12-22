@@ -1,0 +1,28 @@
+---
+# tasks file for dnsmasq
+- name: install dnsmasq
+  apt:
+    name: hostapd
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: dnsmasq.conf
+    dest: /etc/dnsmasq.conf
+
+- name: start dnsmasp
+  ansible.builtin.service:
+    name: dnsmasq
+    enabled: yes
+    state: restarted
+
+- name: shell for NAT
+  ansible.builtin.shell: "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
+
+- name: sh -c "iptables-save > /etc/iptables.ipv4.nat"
+  ansible.builtin.shell: "iptables-save > /etc/iptables.ipv4.nat"
+
+- name: edit /etc/rc.local
+  ansible.builtin.lineinfile:
+    path: /etc/rc.local
+    regexp: '^iptables-restore'
+    line: iptables-restore < /etc/iptables.ipv4.nat
